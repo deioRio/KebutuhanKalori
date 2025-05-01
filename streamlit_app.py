@@ -1,4 +1,29 @@
 import streamlit as st
+from PIL import Image
+import base64
+
+# Fungsi untuk mengonversi gambar menjadi string base64
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Path ke gambar background
+img_path = "/mnt/data/file-53fSstb7WddUAyQruVLE6L"
+img_base64 = get_base64_of_bin_file(img_path)
+
+# CSS untuk menambahkan background image
+page_bg_img = f"""
+<style>
+[data-testid="stAppViewContainer"] > .main {{
+    background-image: url("data:image/png;base64,{img_base64}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}}
+</style>
+"""
+st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # Judul aplikasi
 st.title("Rekomendasi Makanan Berdasarkan Aktivitas & Usia")
@@ -10,7 +35,6 @@ activity_level = st.selectbox("Tingkat aktivitas fisik Anda", ["Rendah", "Sedang
 
 # Fungsi untuk menentukan makanan berdasarkan input
 def get_food_recommendations(age, gender, activity_level):
-    # Format: "nama makanan": gram
     recommended = {}
     to_avoid = {}
 
@@ -34,9 +58,9 @@ def get_food_recommendations(age, gender, activity_level):
         to_avoid.update({
             "Gorengan": 150,
             "Makanan olahan": 180,
-            "Terlalu banyak kafein": 200  # mg kafein bisa juga ditampilkan
+            "Terlalu banyak kafein": 200
         })
-    else:  # usia di atas 50
+    else:
         recommended.update({
             "Makanan tinggi kalsium": 250,
             "Ikan berlemak (salmon, sarden)": 150,
@@ -52,7 +76,7 @@ def get_food_recommendations(age, gender, activity_level):
         recommended.update({
             "Karbohidrat sehat (ubi, roti gandum)": 250,
             "Pisang": 120,
-            "Air mineral yang cukup": 2000  # ml
+            "Air mineral yang cukup": 2000
         })
     elif activity_level == "Rendah":
         to_avoid.update({
