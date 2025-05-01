@@ -1,29 +1,25 @@
 import streamlit as st
-from PIL import Image
 import base64
 
-# Fungsi untuk mengonversi gambar menjadi string base64
-def get_base64_of_bin_file(bin_file):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+# Upload gambar dari user
+uploaded_file = st.file_uploader("Unggah Gambar Background", type=["png", "jpg", "jpeg"])
 
-# Path ke gambar background
-img_path = "/mnt/data/file-53fSstb7WddUAyQruVLE6L"
-img_base64 = get_base64_of_bin_file(img_path)
+if uploaded_file is not None:
+    # Konversi gambar ke base64
+    img_base64 = base64.b64encode(uploaded_file.read()).decode()
 
-# CSS untuk menambahkan background image
-page_bg_img = f"""
-<style>
-[data-testid="stAppViewContainer"] > .main {{
-    background-image: url("data:image/png;base64,{img_base64}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}}
-</style>
-"""
-st.markdown(page_bg_img, unsafe_allow_html=True)
+    # Tambahkan CSS background image
+    page_bg_img = f"""
+    <style>
+    [data-testid="stAppViewContainer"] > .main {{
+        background-image: url("data:image/png;base64,{img_base64}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }}
+    </style>
+    """
+    st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # Judul aplikasi
 st.title("Rekomendasi Makanan Berdasarkan Aktivitas & Usia")
@@ -33,7 +29,7 @@ age = st.number_input("Masukkan umur Anda (tahun)", min_value=1, max_value=100)
 gender = st.selectbox("Pilih jenis kelamin", ["Pria", "Wanita"])
 activity_level = st.selectbox("Tingkat aktivitas fisik Anda", ["Rendah", "Sedang", "Tinggi"])
 
-# Fungsi untuk menentukan makanan berdasarkan input
+# Fungsi rekomendasi makanan
 def get_food_recommendations(age, gender, activity_level):
     recommended = {}
     to_avoid = {}
