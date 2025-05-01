@@ -1,25 +1,4 @@
 import streamlit as st
-import base64
-
-# Upload gambar dari user
-uploaded_file = st.file_uploader("Unggah Gambar Background", type=["png", "jpg", "jpeg"])
-
-if uploaded_file is not None:
-    # Konversi gambar ke base64
-    img_base64 = base64.b64encode(uploaded_file.read()).decode()
-
-    # Tambahkan CSS background image
-    page_bg_img = f"""
-    <style>
-    [data-testid="stAppViewContainer"] > .main {{
-        background-image: url("data:image/png;base64,{img_base64}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }}
-    </style>
-    """
-    st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # Judul aplikasi
 st.title("Rekomendasi Makanan Berdasarkan Aktivitas & Usia")
@@ -29,8 +8,9 @@ age = st.number_input("Masukkan umur Anda (tahun)", min_value=1, max_value=100)
 gender = st.selectbox("Pilih jenis kelamin", ["Pria", "Wanita"])
 activity_level = st.selectbox("Tingkat aktivitas fisik Anda", ["Rendah", "Sedang", "Tinggi"])
 
-# Fungsi rekomendasi makanan
+# Fungsi untuk menentukan makanan berdasarkan input
 def get_food_recommendations(age, gender, activity_level):
+    # Format: "nama makanan": gram
     recommended = {}
     to_avoid = {}
 
@@ -54,9 +34,9 @@ def get_food_recommendations(age, gender, activity_level):
         to_avoid.update({
             "Gorengan": 150,
             "Makanan olahan": 180,
-            "Terlalu banyak kafein": 200
+            "Terlalu banyak kafein": 200  # mg kafein bisa juga ditampilkan
         })
-    else:
+    else:  # usia di atas 50
         recommended.update({
             "Makanan tinggi kalsium": 250,
             "Ikan berlemak (salmon, sarden)": 150,
@@ -72,7 +52,7 @@ def get_food_recommendations(age, gender, activity_level):
         recommended.update({
             "Karbohidrat sehat (ubi, roti gandum)": 250,
             "Pisang": 120,
-            "Air mineral yang cukup": 2000
+            "Air mineral yang cukup": 2000  # ml
         })
     elif activity_level == "Rendah":
         to_avoid.update({
